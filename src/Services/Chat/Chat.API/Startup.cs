@@ -1,6 +1,8 @@
 ﻿using Autofac;
 
 using Chat.API.Exceptions;
+using Chat.API.Hubs;
+using Chat.API.Models;
 using Chat.Application;
 using Chat.Persistence;
 
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Logging;
 
 using Serilog;
 
+using System.Collections.Generic;
 using System.Reflection;
 
 using ViaChatServer.BuildingBlocks.Infrastructure.Configurations;
@@ -55,6 +58,19 @@ namespace Chat.API
             services.AddControllers()
                 .AddJsonOptions(options => SerializingSettings.JsonOptions(options));
 
+            services.AddSignalR();            // Add this service too
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             services.AddHstsService(Environment.IsProduction());
 
             services.AddApiBehaviorOptions();
@@ -66,6 +82,7 @@ namespace Chat.API
             services.ConfigureOptions(new ConfigureSwaggerOptions(services, Assembly.GetExecutingAssembly().GetName().Name, appSettings.AuthorityUrl));
 
             services.AddSingleton(appSettings);
+            services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
             services.AddChatPersistence(appSettings.DatabaseConnectionString);
             services.AddRepositories();
@@ -115,13 +132,7 @@ namespace Chat.API
 
             app.UseRouting();
 
-            app.UseCors(builder =>
-            {
-                // this defines the default CORS policy
-                builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-            });
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -129,6 +140,8 @@ namespace Chat.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHub<ChatHub>("/chat");     // path will look like this https://localhost:44382/chat 
             });
         }
     }

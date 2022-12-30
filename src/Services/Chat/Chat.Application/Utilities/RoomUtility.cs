@@ -42,6 +42,7 @@ namespace Chat.Application.Utilities
             EntityOptions<Room> options = new()
             {
                 Filters = new RoomFilters() { Name = name },
+                Includes = RoomUtility.GetIncludes(includes),
                 ExcludeTracking = excludeTracking,
                 UseSingleQuery = true,
                 HandleError = handleError

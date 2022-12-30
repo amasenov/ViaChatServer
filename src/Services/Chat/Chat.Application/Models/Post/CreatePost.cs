@@ -26,7 +26,8 @@ namespace Chat.Application.Models
 
         public static implicit operator Post(CreatePost model) => (model != null) ? new()
         {
-            Message = model.Msg
+            Message = model.Msg,
+            UserName = model.User
         } : null;
     }
 }

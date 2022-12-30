@@ -48,6 +48,12 @@ namespace Chat.Application.Services
 
             return (UserDto)entity;
         }
+        public async Task<UserDto> GetUserByNameAsync(string name, UserIncludes includes = UserIncludes.None, bool handleError = true)
+        {
+            var entity = await UserUtility.GetUserByNameAsync(_userRepository, name, includes, true, handleError);
+
+            return (UserDto)entity;
+        }
         public async Task<(UpdateUser, User)> GetUserForPatchingAsync(Guid userId)
         {
             var entity = await UserUtility.GetUserByIdAsync(_userRepository, userId);

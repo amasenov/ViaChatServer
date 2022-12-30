@@ -48,6 +48,12 @@ namespace Chat.Application.Services
 
             return (RoomDto)entity;
         }
+        public async Task<RoomDto> GetRoomByNameAsync(string name, RoomIncludes includes = RoomIncludes.None, bool handleError = true)
+        {
+            var entity = await RoomUtility.GetRoomByNameAsync(_roomRepository, name, includes, true, handleError);
+
+            return (RoomDto)entity;
+        }
         public async Task<(UpdateRoom, Room)> GetRoomForPatchingAsync(Guid roomId)
         {
             var entity = await RoomUtility.GetRoomByIdAsync(_roomRepository, roomId);
