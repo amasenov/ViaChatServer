@@ -20,14 +20,12 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Swagger
     {
         private readonly IApiVersionDescriptionProvider _provider;
         private readonly string _executingAssembly;
-        private readonly Uri _authorityUrl;
 
-        public ConfigureSwaggerOptions(IServiceCollection services, string executingAssembly, Uri authorityUrl = null)
+        public ConfigureSwaggerOptions(IServiceCollection services, string executingAssembly)
         {
             var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
             _provider = provider;
             _executingAssembly = executingAssembly;
-            _authorityUrl = authorityUrl;
         }
 
         public void Configure(string name, SwaggerGenOptions options)
@@ -73,29 +71,7 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Swagger
                 options.SwaggerDoc(description.GroupName, CreateVersionInfo(description));
             }
 
-            if (_authorityUrl != null)
-            {
-                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    //BearerFormat = "JWT",
-                    //In = ParameterLocation.Header,
-                    //OpenIdConnectUrl = new Uri($"{_authorityUrl}/.well-known/openid-configuration"),
-                    Flows = new OpenApiOAuthFlows()
-                    {
-                        AuthorizationCode = new OpenApiOAuthFlow()
-                        {
-                            AuthorizationUrl = _authorityUrl.TryExtend("connect/authorize"),
-                            TokenUrl = _authorityUrl.TryExtend("connect/token"),
-                            Scopes = new Dictionary<string, string>() { { SupportedScopes.ChatApi, "Chat API - full access" } }
-                        }
-                    }
-                });
-            }
-
             options.OperationFilter<AcceptLanguageOperationFilter>();
-
-            options.OperationFilter<AuthorizeCheckOperationFilter>();
         }
 
         private static OpenApiInfo CreateVersionInfo(ApiVersionDescription description)

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-using System;
-
 using ViaChatServer.BuildingBlocks.Infrastructure.Extensions;
 
 namespace ViaChatServer.BuildingBlocks.Infrastructure.Configurations
@@ -15,16 +13,7 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Configurations
             _configuration = configuration;
         }
         #region Application settings
-        public ApplicationSettings GetApplicationSettings()
-        {
-            const string sectionName = "AppSettings";
-
-            Uri authorityUrl = _configuration.GetUriSectionSetting(sectionName, "AuthorityUrl");
-
-            string databaseConnectionString = GetDatabaseConnectionString(_configuration);
-
-            return ApplicationSettings.GetInstance(databaseConnectionString, authorityUrl);
-        }
+        public string GetDatabaseConnection() => GetDatabaseConnectionString(_configuration);
         #endregion
 
         #region Private methods

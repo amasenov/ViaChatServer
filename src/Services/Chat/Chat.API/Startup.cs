@@ -45,13 +45,10 @@ namespace Chat.API
         public void ConfigureServices(IServiceCollection services)
         {
             MicroserviceConfigurationParser configurationParser = new(Configuration);
-
-            var appSettings = configurationParser.GetApplicationSettings();
+            string databaseConnectionString = configurationParser.GetDatabaseConnection();
 
             // The following line enables Application Insights telemetry collection.
             services.AddTelementry(Configuration);
-
-            services.AddAuth(appSettings.AuthorityUrl.AbsoluteUri, Configuration);
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -79,12 +76,11 @@ namespace Chat.API
             services.AddForwardHeader();
 
             services.AddSwaggerGen();
-            services.ConfigureOptions(new ConfigureSwaggerOptions(services, Assembly.GetExecutingAssembly().GetName().Name, appSettings.AuthorityUrl));
+            services.ConfigureOptions(new ConfigureSwaggerOptions(services, Assembly.GetExecutingAssembly().GetName().Name));
 
-            services.AddSingleton(appSettings);
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
-            services.AddChatPersistence(appSettings.DatabaseConnectionString);
+            services.AddPersistence(databaseConnectionString);
             services.AddRepositories();
 
             services.AddServices();
@@ -133,9 +129,6 @@ namespace Chat.API
             app.UseRouting();
 
             app.UseCors();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

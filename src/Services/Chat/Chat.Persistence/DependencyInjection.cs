@@ -18,7 +18,7 @@ namespace Chat.Persistence
                     new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider()
                 });
 
-        public static IServiceCollection AddChatPersistence(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddPersistence(this IServiceCollection services, string connectionString)
         {
             var isDebug = false;
 #if DEBUG
