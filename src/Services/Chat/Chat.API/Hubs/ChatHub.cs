@@ -32,7 +32,7 @@ namespace Chat.API.Hubs
             _userService = userService;
             _roomService = roomService;
 
-            _botUser = "MyChat Bot";
+            _botUser = "Via Chat Bot";
             _connections = connections;
         }
 
@@ -69,9 +69,11 @@ namespace Chat.API.Hubs
 
                 if(room.Users.HasValues())
                 {
-                    foreach(var post in room.Users.SelectMany(x => x.Posts))
+                    // show only the last 100 messages
+                    var posts = room.Users.SelectMany(x => x.Posts.OrderByDescending(p => p.CreateDate)).Take(100).ToList();
+                    foreach (var post in posts)
                     {
-                        await Clients.Caller.SendAsync("ReceiveMessage", userConnection.User, post.Message);
+                        await Clients.Caller.SendAsync("ReceiveMessage", post.User, post.Message);
                     }
                 }
 
@@ -91,6 +93,18 @@ namespace Chat.API.Hubs
                 };
                 var result = await _postService.CreatePostAsync(model);
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, result.Message);
+            }
+        }
+
+        public async Task GetLastMessages(string name, int limit)
+        {
+            var room = await _roomService.GetRoomByNameAsync(name, RoomIncludes.All, false);
+
+            // show only the requested number of messages
+            var posts = room.Users.SelectMany(x => x.Posts.OrderByDescending(p => p.CreateDate)).Take(limit).ToList();
+            foreach (var post in posts)
+            {
+                await Clients.Caller.SendAsync("ReceiveMessage", post.User, post.Message);
             }
         }
 

@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Persistence", "Service
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WebSPA", "Web\WebSPA\WebSPA.esproj", "{CD8218FF-AD4C-454F-8229-AE3E711D36FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientsLibrary", "BuildingBlocks\ClientsLibrary\ClientsLibrary.csproj", "{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{CD8218FF-AD4C-454F-8229-AE3E711D36FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD8218FF-AD4C-454F-8229-AE3E711D36FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD8218FF-AD4C-454F-8229-AE3E711D36FD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{B5ED694D-34EE-4C58-AF15-FEF4711A9FAE} = {8D4D56B2-3CFF-4BDC-8523-F78D8B5571FB}
 		{FF3D2649-4850-4CA3-BDB8-965107F313BB} = {8D4D56B2-3CFF-4BDC-8523-F78D8B5571FB}
 		{CD8218FF-AD4C-454F-8229-AE3E711D36FD} = {3352050F-67A6-45EE-B6AD-899DB70F4292}
+		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A} = {E476E82A-8D1E-4C58-9FA2-18FE9F99911B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F889C6A2-5AAB-45CF-B2A9-82BC03084359}
