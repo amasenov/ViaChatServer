@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Domain", "Services\Cha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Persistence", "Services\Chat\Chat.Persistence\Chat.Persistence.csproj", "{FF3D2649-4850-4CA3-BDB8-965107F313BB}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WebSPA", "Web\WebSPA\WebSPA.esproj", "{CB6B45A1-946F-4554-9858-217CBB678468}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,12 +61,6 @@ Global
 		{FF3D2649-4850-4CA3-BDB8-965107F313BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF3D2649-4850-4CA3-BDB8-965107F313BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF3D2649-4850-4CA3-BDB8-965107F313BB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CB6B45A1-946F-4554-9858-217CBB678468}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,7 +74,6 @@ Global
 		{CB2A7FBD-C817-4C2F-B7D3-DBD33E3D73F1} = {8D4D56B2-3CFF-4BDC-8523-F78D8B5571FB}
 		{B5ED694D-34EE-4C58-AF15-FEF4711A9FAE} = {8D4D56B2-3CFF-4BDC-8523-F78D8B5571FB}
 		{FF3D2649-4850-4CA3-BDB8-965107F313BB} = {8D4D56B2-3CFF-4BDC-8523-F78D8B5571FB}
-		{CB6B45A1-946F-4554-9858-217CBB678468} = {3352050F-67A6-45EE-B6AD-899DB70F4292}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F889C6A2-5AAB-45CF-B2A9-82BC03084359}
