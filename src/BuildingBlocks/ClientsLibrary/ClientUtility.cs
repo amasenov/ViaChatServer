@@ -16,7 +16,7 @@ namespace ClientsLibrary
         public static async Task<bool> HandleCommandAsync(string command)
         {
             var parts = command?.Split(" ");
-            var commandPart = !string.IsNullOrWhiteSpace(command) ? parts[0] : string.Empty;
+            var commandPart = !string.IsNullOrWhiteSpace(command) ? parts[0].Trim() : string.Empty;
             if (commandPart.Equals("exit", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
