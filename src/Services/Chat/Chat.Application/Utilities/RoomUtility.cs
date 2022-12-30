@@ -85,11 +85,6 @@ namespace Chat.Application.Utilities
                 sorting.Add(new SortingExpression<Room, string>(x => x.Name, orderDescending));
             }
 
-            if (sortBy == RoomSortByType.Limit)
-            {
-                sorting.Add(new SortingExpression<Room, int>(x => x.Limit, orderDescending));
-            }
-
             if (sortBy == RoomSortByType.CreateDate)
             {
                 sorting.Add(new SortingExpression<Room, DateTime>(x => x.Created, orderDescending));

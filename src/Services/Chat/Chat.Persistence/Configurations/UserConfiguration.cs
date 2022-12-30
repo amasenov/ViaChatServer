@@ -18,6 +18,9 @@ namespace Chat.Persistence.Configurations
             builder.Property(x => x.Name)
                 .HasColumnType("varchar(64)");
 
+            builder.Property(x => x.IsActive)
+                .HasDefaultValue(false);
+
             builder.HasMany<Post>(u => u.Posts)
                 .WithOne(p => p.User)
                 .HasForeignKey(u => u.UserId)

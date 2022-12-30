@@ -18,10 +18,6 @@ namespace Chat.Persistence.Configurations
             builder.Property(x => x.Name)
                 .HasColumnType("varchar(64)");
 
-            builder.Property(x => x.Limit)
-               .HasColumnType("tinyint")
-               .HasDefaultValue(20);
-
             builder.HasMany<Post>(r => r.Posts)
                 .WithOne(p => p.Room)
                 .HasForeignKey(p => p.RoomId)

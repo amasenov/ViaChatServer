@@ -13,6 +13,7 @@ namespace Chat.Application.Models.Filters
         public Guid? Id { get; init; }
         public string SearchTerm { get; init; }
         public string Name { get; init; }
+        public bool? IsActive { get; init; }
 
         public static implicit operator List<Expression<Func<User, bool>>> (UserFilters filters)
         {
@@ -37,6 +38,11 @@ namespace Chat.Application.Models.Filters
             {
                 string name = filters.Name.Trim().ToUpper();
                 result.Add(u => u.Name.ToUpper().Equals(name));
+            }
+
+            if(filters.IsActive.HasValue)
+            {
+                result.Add(u => u.IsActive == filters.IsActive.Value);
             }
 
             return result;

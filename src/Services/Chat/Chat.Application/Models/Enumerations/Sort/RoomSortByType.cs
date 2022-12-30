@@ -14,10 +14,6 @@
         /// </summary>
         Name,
         /// <summary>
-        /// The limit
-        /// </summary>
-        Limit,
-        /// <summary>
         /// The create date
         /// </summary>
         CreateDate

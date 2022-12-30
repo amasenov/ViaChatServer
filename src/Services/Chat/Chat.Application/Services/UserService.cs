@@ -7,6 +7,7 @@ using Chat.Application.Utilities;
 using Chat.Domain.Entities;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,7 +30,6 @@ namespace Chat.Application.Services
             EntityOptions<User> options = new()
             {
                 Filters = new UserFilters() { SearchTerm = searchTerm },
-                Includes = UserUtility.GetIncludes(UserIncludes.None),
                 Sortings = UserUtility.GetSorting(sortBy, orderDescending, searchTerm),
                 ExcludeTrackingWithIdentityResolution = true,
                 UseSingleQuery = true
@@ -42,15 +42,33 @@ namespace Chat.Application.Services
                 Results = result.Results.Select(x => (UserDto)x)
             };
         }
+        public async Task<List<UserDto>> GetUsersAsync(bool? isActive = null)
+        {
+            EntityOptions<User> options = new()
+            {
+                Filters = new UserFilters() { IsActive = isActive },
+                ExcludeTracking = true,
+                UseSingleQuery = true
+            };
+
+            var results = await _userRepository.GetEntitiesAsync(options);
+
+            return results.Select(x => (UserDto)x).ToList();
+        }
         public async Task<UserDto> GetUserByIdAsync(Guid userId)
         {
             var entity = await UserUtility.GetUserByIdAsync(_userRepository, userId, excludeTracking: true);
 
             return (UserDto)entity;
         }
-        public async Task<UserDto> GetUserByNameAsync(string name, UserIncludes includes = UserIncludes.None, bool handleError = true)
+        public async Task<UserDto> GetUserByNameAsync(string name, UserIncludes includes = UserIncludes.None, bool handleError = true, bool setActive = false)
         {
             var entity = await UserUtility.GetUserByNameAsync(_userRepository, name, includes, true, handleError);
+            if(entity.HasValue() && setActive)
+            {
+                entity.IsActive = true;
+                _ = _userRepository.TryUpdateAsync(entity);
+            }
 
             return (UserDto)entity;
         }
@@ -65,11 +83,13 @@ namespace Chat.Application.Services
 
             return (model, entity);
         }
-        public async Task<UserDto> CreateUserAsync(CreateUser model)
+        public async Task<UserDto> CreateUserAsync(CreateUser model, bool isActive = false)
         {
             _ = await UserUtility.HasUniqueNameAsync(_userRepository, model.Name);
 
             User entity = model;
+            entity.IsActive = isActive;
+
             _ = await _userRepository.TryAddAsync(entity);
 
             return (UserDto)entity;
@@ -97,6 +117,16 @@ namespace Chat.Application.Services
             var entity = await UserUtility.GetUserByIdAsync(_userRepository, userId);
 
             _ = await _userRepository.TryDeleteAsync(entity);
+        }
+        public async Task SetActiveAsync(string name, bool isActive = false)
+        {
+            var entity = await UserUtility.GetUserByNameAsync(_userRepository, name, UserIncludes.None, false, false);
+            if(entity.HasValue())
+            {
+                entity.IsActive = isActive;
+                _ = _userRepository.TryUpdateAsync(entity);
+            }
+
         }
     }
 }

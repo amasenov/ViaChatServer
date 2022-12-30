@@ -1,6 +1,7 @@
 ﻿using Chat.Domain.Entities;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
@@ -14,6 +15,7 @@ namespace Chat.Application.Interfaces
     {
         IQueryable<User> CreateBaseQuery(EntityOptions<User> options);
         Task<PagedResponse<User>> GetEntitiesAsync(PagingOptions pagingOptions, EntityOptions<User> options);
+        Task<List<User>> GetEntitiesAsync(EntityOptions<User> options);
         Task<User> GetEntityAsync(EntityOptions<User> options);
         Task<(bool isSuccess, Exception exception)> TryAddAsync(User entity);
         Task<(bool isSuccess, Exception exception)> TryUpdateAsync(User entity);

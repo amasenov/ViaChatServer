@@ -15,7 +15,7 @@
                 Console.Write("Enter a command: ");
                 var command = Console.ReadLine();
 
-                bool shouldBreak = await ClientUtility.HandleCommandAsync(command);
+                bool shouldBreak = await ClientUtility.HandleCommandAsync(command, true);
                 if (shouldBreak)
                 {
                     Console.Write($"{Environment.NewLine}Press any key to exit...");

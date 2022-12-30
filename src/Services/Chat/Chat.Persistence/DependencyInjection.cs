@@ -1,10 +1,12 @@
-﻿using System;
-using System.Reflection;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using System;
+using System.Reflection;
+
+using ViaChatServer.BuildingBlocks.Infrastructure.Extensions;
 using ViaChatServer.BuildingBlocks.Infrastructure.Interfaces;
 using ViaChatServer.BuildingBlocks.Infrastructure.Repositories;
 
@@ -18,15 +20,20 @@ namespace Chat.Persistence
                     new Microsoft.Extensions.Logging.Debug.DebugLoggerProvider()
                 });
 
-        public static IServiceCollection AddPersistence(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             var isDebug = false;
 #if DEBUG
             isDebug = true;
 #endif
-
             // Using LocalDB
             // https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16
+            string connectionString = configuration.GetValue<string>("ConnectionStrings__ChatDatabaseConnectionString"); 
+            if (connectionString.IsEmpty())
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+
             services.AddDbContext<ChatDbContext>(options =>
             {
                 options
@@ -48,8 +55,6 @@ namespace Chat.Persistence
                 });
             });
             services.AddScoped<IUnitOfWork, UnitOfWork<ChatDbContext>>();
-
-            services.AddScoped<DatabaseSeeder>();
 
             return services;
         }

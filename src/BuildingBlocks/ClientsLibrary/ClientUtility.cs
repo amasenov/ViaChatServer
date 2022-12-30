@@ -13,21 +13,22 @@ namespace ClientsLibrary
         static string _room;
         static string _message;
 
-        public static async Task<bool> HandleCommandAsync(string command)
+        public static async Task<bool> HandleCommandAsync(string command, bool useLive = false)
         {
             var parts = command?.Split(" ");
             var commandPart = !string.IsNullOrWhiteSpace(command) ? parts[0].Trim() : string.Empty;
-            if (commandPart.Equals("exit", StringComparison.OrdinalIgnoreCase))
+            Enum.TryParse(commandPart, true, out CommandType commandType);
+            if (commandType == CommandType.Exit)
             {
                 return true;
             }
 
-            bool isGet = commandPart.Equals("get", StringComparison.OrdinalIgnoreCase);
+            bool isGet = commandType == CommandType.Get;
             // accept values with at least 3 charectars
             string value = parts?.Length > 1 && (parts[1].Length > 2 || isGet) ? parts[1] : string.Empty;
             if (!string.IsNullOrWhiteSpace(value))
             {
-                if (command.StartsWith("connect", StringComparison.OrdinalIgnoreCase) && Uri.TryCreate(value, UriKind.Absolute, out Uri url) && url.IsWellFormedOriginalString())
+                if ((commandType == CommandType.Connect) && Uri.TryCreate(value, UriKind.Absolute, out Uri url) && url.IsWellFormedOriginalString())
                 {
                     _connection = new HubConnectionBuilder()
                         .WithUrl(url) // "https://localhost:44382/chat"
@@ -36,28 +37,33 @@ namespace ClientsLibrary
 
                     await ConnectWithRetryAsync(_connection);
                 }
-                else if (command.StartsWith("user", StringComparison.OrdinalIgnoreCase))
+                else if (commandType == CommandType.User)
                 {
                     _user = value;
                 }
-                else if (command.StartsWith("room", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(_user))
+                else if ((commandType == CommandType.Room) && !string.IsNullOrWhiteSpace(_user))
                 {
                     _room = value;
                     await _connection.InvokeAsync("JoinRoom", new { user = _user, room = _room });
                 }
-                else if (command.StartsWith("get", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(_room) && int.TryParse(value, out int limit))
+                else if ((commandType == CommandType.Get) && !string.IsNullOrWhiteSpace(_room) && int.TryParse(value, out int limit))
                 {
                     await _connection.InvokeAsync("GetLastMessages", _room, limit);
                 }
-                else if (command.StartsWith("post", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(_room))
+                else if ((commandType == CommandType.Post) && !string.IsNullOrWhiteSpace(_room))
                 {
                     _message = value;
                     await _connection.InvokeAsync("SendMessage", _message);
                 }
-                else if (command.StartsWith("post", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(_room))
+                else if (useLive && (commandType == CommandType.Live))
                 {
-                    _message = value;
-                    await _connection.InvokeAsync("SendMessage", _message);
+                    _room = value;
+                    await _connection.InvokeAsync("JoinRoom", new { user = _user, room = _room });
+
+                    _connection.On<string, string>("ReceiveMessage", (user, message) =>
+                    {
+                        Console.Write($"{user}: {message}{Environment.NewLine}");
+                    });
                 }
                 else
                 {
@@ -81,10 +87,14 @@ namespace ClientsLibrary
                     await connection.StartAsync();
                     Debug.Assert(connection.State == HubConnectionState.Connected);
 
-                    connection.On<string, string>("ReceiveMessage", (user, message) =>
+                    connection.On<string, string>("ReceiveLastMessages", (user, message) =>
                     {
                         Console.Write($"{user}: {message}{Environment.NewLine}");
                     });
+                    //connection.On<string, string>("ReceiveMessage", (user, message) =>
+                    //{
+                    //    Console.Write($"{user}: {message}{Environment.NewLine}");
+                    //});
                     return true;
                 }
                 catch

@@ -19,7 +19,6 @@ using Serilog;
 using System.Collections.Generic;
 using System.Reflection;
 
-using ViaChatServer.BuildingBlocks.Infrastructure.Configurations;
 using ViaChatServer.BuildingBlocks.Infrastructure.Constants;
 using ViaChatServer.BuildingBlocks.Infrastructure.Extensions;
 using ViaChatServer.BuildingBlocks.Infrastructure.LogConfigurations;
@@ -44,12 +43,8 @@ namespace Chat.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            MicroserviceConfigurationParser configurationParser = new(Configuration);
-            string databaseConnectionString = configurationParser.GetDatabaseConnection();
-
             // The following line enables Application Insights telemetry collection.
             services.AddTelementry(Configuration);
-
             services.AddRouting(options => options.LowercaseUrls = true);
 
             services.AddControllers()
@@ -80,7 +75,7 @@ namespace Chat.API
 
             services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
-            services.AddPersistence(databaseConnectionString);
+            services.AddPersistence(Configuration);
             services.AddRepositories();
 
             services.AddServices();

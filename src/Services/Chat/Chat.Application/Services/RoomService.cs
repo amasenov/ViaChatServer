@@ -7,6 +7,7 @@ using Chat.Application.Utilities;
 using Chat.Domain.Entities;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,7 +30,6 @@ namespace Chat.Application.Services
             EntityOptions<Room> options = new()
             {
                 Filters = new RoomFilters() { SearchTerm = searchTerm },
-                Includes = RoomUtility.GetIncludes(RoomIncludes.None),
                 Sortings = RoomUtility.GetSorting(sortBy, orderDescending, searchTerm),
                 ExcludeTrackingWithIdentityResolution = true,
                 UseSingleQuery = true
@@ -41,6 +41,18 @@ namespace Chat.Application.Services
             {
                 Results = result.Results.Select(x => (RoomDto)x)
             };
+        }
+        public async Task<List<RoomDto>> GetRoomsAsync()
+        {
+            EntityOptions<Room> options = new()
+            {
+                ExcludeTracking = true,
+                UseSingleQuery = true
+            };
+
+            var results = await _roomRepository.GetEntitiesAsync(options);
+
+            return results.Select(x => (RoomDto)x).ToList();
         }
         public async Task<RoomDto> GetRoomByIdAsync(Guid roomId)
         {

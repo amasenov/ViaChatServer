@@ -15,6 +15,10 @@ namespace Chat.Application.Models
         /// </summary>
         public string Name { get; init; }
         /// <summary>
+        /// The current active state of user
+        /// </summary>
+        public bool IsActive { get; init; }
+        /// <summary>
         /// The user posts
         /// </summary>
         public IEnumerable<PostDto> Posts { get; init; }
@@ -22,6 +26,7 @@ namespace Chat.Application.Models
         public static implicit operator UserDto(User entity) => (entity != null) ? new()
         {
             Name = entity.Name,
+            IsActive = entity.IsActive,
             Posts = entity.Posts?.Select(x => (PostDto)x)
         } : null;
     }

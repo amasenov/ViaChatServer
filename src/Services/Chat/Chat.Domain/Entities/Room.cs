@@ -14,7 +14,6 @@ namespace Chat.Domain.Entities
         }
 
         public string Name { get; set; }
-        public int Limit { get; set; }
 
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Post> Posts { get; set; }

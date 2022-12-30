@@ -40,6 +40,8 @@ namespace Chat.API.Hubs
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
             {
+                _userService.SetActiveAsync(userConnection.User).GetAwaiter().GetResult();
+
                 _connections.Remove(Context.ConnectionId);
                 Clients.OthersInGroup(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has left");
                 SendUsersConnected(userConnection.Room);
@@ -47,7 +49,11 @@ namespace Chat.API.Hubs
 
             return base.OnDisconnectedAsync(exception);
         }
-
+        /// <summary>
+        /// Joins a room
+        /// </summary>
+        /// <param name="userConnection">The argument passed by the client</param>
+        /// <returns></returns>
         public async Task JoinRoom(UserConnection userConnection)
         {
             var room = await _roomService.GetRoomByNameAsync(userConnection.Room, RoomIncludes.All, false);
@@ -57,9 +63,9 @@ namespace Chat.API.Hubs
             }
             else
             {
-                var user = await _userService.GetUserByNameAsync(userConnection.User, UserIncludes.None, false);
+                var user = await _userService.GetUserByNameAsync(userConnection.User, UserIncludes.None, false, true);
                 // if user was not found, create new user
-                user ??= await _userService.CreateUserAsync(new() { Name = userConnection.User });
+                user ??= await _userService.CreateUserAsync(new() { Name = userConnection.User }, true);
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, room.Name);
 
@@ -70,7 +76,7 @@ namespace Chat.API.Hubs
                 if(room.Users.HasValues())
                 {
                     // show only the last 100 messages
-                    var posts = room.Users.SelectMany(x => x.Posts.OrderByDescending(p => p.CreateDate)).Take(100).ToList();
+                    var posts = room.Users.SelectMany(x => x.Posts).OrderByDescending(p => p.CreateDate).Take(100).ToList();
                     foreach (var post in posts)
                     {
                         await Clients.Caller.SendAsync("ReceiveMessage", post.User, post.Message);
@@ -80,7 +86,11 @@ namespace Chat.API.Hubs
                 await SendUsersConnected(room.Name);
             }
         }
-
+        /// <summary>
+        /// Send message to room
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <returns></returns>
         public async Task SendMessage(string message)
         {
             if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
@@ -95,19 +105,54 @@ namespace Chat.API.Hubs
                 await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", userConnection.User, result.Message);
             }
         }
-
+        /// <summary>
+        /// Get the requested amount of messages from the specified room
+        /// </summary>
+        /// <param name="name">The name of the room</param>
+        /// <param name="limit">The requested amount of messages</param>
+        /// <returns></returns>
         public async Task GetLastMessages(string name, int limit)
         {
             var room = await _roomService.GetRoomByNameAsync(name, RoomIncludes.All, false);
 
             // show only the requested number of messages
-            var posts = room.Users.SelectMany(x => x.Posts.OrderByDescending(p => p.CreateDate)).Take(limit).ToList();
+            var posts = room.Users.SelectMany(x => x.Posts).OrderByDescending(p => p.CreateDate).Take(limit).ToList();
             foreach (var post in posts)
             {
-                await Clients.Caller.SendAsync("ReceiveMessage", post.User, post.Message);
+                await Clients.Caller.SendAsync("ReceiveLastMessages", post.User, post.Message);
             }
         }
+        /// <summary>
+        /// Get all active users
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetActiveUsers()
+        {
+            var users = await _userService.GetUsersAsync(true);
 
+            foreach (var user in users)
+            {
+                await Clients.Caller.SendAsync("ReceiveActiveUsers", user.Name);
+            }
+        }
+        /// <summary>
+        /// Get all rooms
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetRooms()
+        {
+            var rooms = await _roomService.GetRoomsAsync();
+
+            foreach (var room in rooms)
+            {
+                await Clients.Caller.SendAsync("ReceiveRooms", room.Name);
+            }
+        }
+        /// <summary>
+        /// Add new room
+        /// </summary>
+        /// <param name="userConnection">The argument passed by the client</param>
+        /// <returns></returns>
         public async Task AddRoom(UserConnection userConnection)
         {
             CreateRoom model = new()
