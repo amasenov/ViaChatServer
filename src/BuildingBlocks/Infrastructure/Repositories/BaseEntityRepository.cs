@@ -16,9 +16,8 @@ using ViaChatServer.BuildingBlocks.Infrastructure.Models;
 
 namespace ViaChatServer.BuildingBlocks.Infrastructure.Repositories
 {
-    public record BaseEntityRepository<TEntity> : IBaseEntityRepository<TEntity>, IDisposable where TEntity : BaseEntity
+    public record BaseEntityRepository<TEntity> : IBaseEntityRepository<TEntity> where TEntity : BaseEntity
     {
-        private bool _disposed = false;
         private readonly IUnitOfWork _unitOfWork;
 
         protected DbSet<TEntity> _entity;
@@ -544,24 +543,6 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Repositories
         public virtual void ClearTrackedEntities(TEntity trackedEntity)
         {
             _unitOfWork.ChangeTracker<TEntity>(trackedEntity).Clear();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _unitOfWork.Dispose();
-                }
-            }
-            _disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private async Task<(bool isResolved, DbUpdateConcurrencyException ex)> TryResolveConcurrencyAsync(DbUpdateConcurrencyException dbEx)

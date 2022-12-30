@@ -16,7 +16,7 @@ using ViaChatServer.BuildingBlocks.Infrastructure.Models;
 
 namespace ViaChatServer.BuildingBlocks.Infrastructure.Repositories
 {
-    public record BaseIdEntityRepository<TEntity> : BaseEntityRepository<TEntity>, IBaseEntityRepository<TEntity>, IBaseIdEntityRepository<TEntity>, IDisposable where TEntity : BaseIdEntity
+    public record BaseIdEntityRepository<TEntity> : BaseEntityRepository<TEntity>, IBaseEntityRepository<TEntity>, IBaseIdEntityRepository<TEntity> where TEntity : BaseIdEntity
     {
         public BaseIdEntityRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {

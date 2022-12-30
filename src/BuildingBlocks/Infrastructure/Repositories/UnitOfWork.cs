@@ -12,9 +12,8 @@ using ViaChatServer.BuildingBlocks.Infrastructure.Interfaces;
 
 namespace ViaChatServer.BuildingBlocks.Infrastructure.Repositories
 {
-    public record UnitOfWork<TContext> : IDisposable, IUnitOfWork where TContext : DbContext
+    public record UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
     {
-        private bool _disposed = false;
         private readonly TContext _context;
 
         public UnitOfWork(TContext context)
@@ -58,24 +57,6 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Repositories
         public void Save()
         {
             _context.SaveChanges();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
-            }
-            _disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public ChangeTracker ChangeTracker<TEntity>(TEntity entity) where TEntity : class

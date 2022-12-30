@@ -21,7 +21,5 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Interfaces
         Task SaveAsync(CancellationToken cancellationToken = new CancellationToken());
 
         void Save();
-
-        void Dispose();
     }
 }
