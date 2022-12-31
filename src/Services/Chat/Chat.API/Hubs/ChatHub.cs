@@ -128,11 +128,12 @@ namespace Chat.API.Hubs
         /// <returns></returns>
         public async Task GetActiveUsers()
         {
-            var users = await _userService.GetUsersAsync(true);
+            //var users = await _userService.GetUsersAsync(true);
 
-            foreach (var user in users)
+            var usersNames = _connections.Select(x => x.Value.User);
+            foreach (var userName in usersNames)
             {
-                await Clients.Caller.SendAsync("ReceiveActiveUsers", user.Name);
+                await Clients.Caller.SendAsync("ReceiveActiveUsers", userName);
             }
         }
         /// <summary>
@@ -162,6 +163,38 @@ namespace Chat.API.Hubs
             _ = await _roomService.CreateRoomAsync(model);
             // clear error
             await Clients.Caller.SendAsync("ReceiveError");
+        }
+        /// <summary>
+        /// Invite existing user to room
+        /// </summary>
+        /// <param name="room">The name of the room</param>
+        /// <param name="user">The name of the user</param>
+        /// <returns></returns>
+        public async Task InviteUser(string room, string user)
+        {
+            var roomModel = await _roomService.GetRoomByNameAsync(room, RoomIncludes.None, false);
+            var userModel = await _userService.GetUserByNameAsync(user, UserIncludes.None, false, true);
+
+            // if the user is connected to the chat, find its connectionid and add it to the specified room
+            var existingUser = _connections.Where(x => x.Value.User == userModel.Name).FirstOrDefault();
+            if (existingUser.HasValue())
+            {
+                await Groups.AddToGroupAsync(existingUser.Key, existingUser.Value.User);
+            }
+        }
+        /// <summary>
+        /// Execute code before user leaves
+        /// </summary>
+        /// <returns></returns>
+        public async Task LeaveRoom()
+        {
+            if (_connections.TryGetValue(Context.ConnectionId, out UserConnection userConnection))
+            {
+                await _userService.SetActiveAsync(userConnection.User);
+
+                _connections.Remove(Context.ConnectionId);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, userConnection.Room);
+            }
         }
 
         public Task SendUsersConnected(string room)

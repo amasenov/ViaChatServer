@@ -70,7 +70,8 @@ const App = () => {
   }
 
   const closeConnection = async () => {
-    try {
+      try {
+      await connection.invoke("LeaveRoom");
       await connection.stop();
     } catch (e) {
       console.log(e);

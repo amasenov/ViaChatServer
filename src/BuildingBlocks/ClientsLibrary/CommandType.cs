@@ -8,6 +8,7 @@
         Post,
         Get,
         Live,
-        Exit
+        Exit,
+        Leave
     }
 }

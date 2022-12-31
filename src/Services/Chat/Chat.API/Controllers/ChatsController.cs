@@ -32,7 +32,7 @@ namespace Chat.API.Controllers
 
         /// <summary>Creates a room asynchronous.</summary>
         /// <returns>The created room in case of success.</returns>
-        [HttpGet("/" + ApiRoutes.BaseVersionRoute + "/createRoom")]
+        [HttpPost("/" + ApiRoutes.BaseVersionRoute + "/createRoom")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<RoomDto>> CreateRoomAsync([FromQuery] CreateRoom model)
         {
@@ -43,7 +43,7 @@ namespace Chat.API.Controllers
 
         /// <summary>Creates a post asynchronous.</summary>
         /// <returns>The created post in case of success.</returns>
-        [HttpGet("/" + ApiRoutes.BaseVersionRoute + "/post")]
+        [HttpPost("/" + ApiRoutes.BaseVersionRoute + "/post")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreatePostAsync([FromQuery] CreatePost model)
         {

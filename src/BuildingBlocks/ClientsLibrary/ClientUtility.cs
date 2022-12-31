@@ -8,16 +8,19 @@ namespace ClientsLibrary
 {
     public static class ClientUtility
     {
-        static HubConnection _connection;
-        static string _user;
-        static string _room;
-        static string _message;
+        static HubConnection _connection = null;
+        static string _user = null;
+        static string _room = null;
+        static string _message = null;
 
         public static async Task<bool> HandleCommandAsync(string command, bool useLive = false)
         {
             var parts = command?.Split(" ");
             var commandPart = !string.IsNullOrWhiteSpace(command) ? parts[0].Trim() : string.Empty;
-            Enum.TryParse(commandPart, true, out CommandType commandType);
+            if(!Enum.TryParse(commandPart, true, out CommandType commandType))
+            {
+                Console.Write($"Invalid command. Please try again.{Environment.NewLine}");
+            }
             if (commandType == CommandType.Exit)
             {
                 return true;
@@ -45,6 +48,11 @@ namespace ClientsLibrary
                 {
                     _room = value;
                     await _connection.InvokeAsync("JoinRoom", new { user = _user, room = _room });
+                }
+                else if ((commandType == CommandType.Leave) && !string.IsNullOrWhiteSpace(_room))
+                {
+                    _room = null;
+                    await _connection.InvokeAsync("LeaveRoom");
                 }
                 else if ((commandType == CommandType.Get) && !string.IsNullOrWhiteSpace(_room) && int.TryParse(value, out int limit))
                 {
