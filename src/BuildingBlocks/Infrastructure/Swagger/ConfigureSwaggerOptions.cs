@@ -84,7 +84,7 @@ namespace ViaChatServer.BuildingBlocks.Infrastructure.Swagger
                 {
                   {"x-logo", new OpenApiObject
                     {
-                       {"url", new OpenApiString("https://skpservices.blob.core.windows.net/images-temp/topology_logo_1000.png")},
+                       {"url", new OpenApiString("")},
                        { "altText", new OpenApiString("Chat")}
                     }
                   }

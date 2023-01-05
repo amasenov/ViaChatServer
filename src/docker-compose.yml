@@ -6,7 +6,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
 
   chat-api:
-    image: ${REGISTRY:-topology}/chat.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-via}/chat.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: Services/Chat/Chat.API/Dockerfile
