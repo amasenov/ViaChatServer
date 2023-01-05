@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+
+  chat-api:
+    image: ${REGISTRY:-topology}/chat.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Chat/Chat.API/Dockerfile
+      args:
+       ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - sqldata

@@ -1,0 +1,39 @@
+version: '3.4'
+
+# The Production docker-compose file has to have the external/real IPs or DNS names for the services
+# The VIA_PROD_EXTERNAL_DNS_NAME_OR_IP environment variable is taken, by default, from the ".env" file defined like:
+#     VIA_PROD_EXTERNAL_DNS_NAME_OR_IP=192.168.88.248
+# but values present in the environment vars at runtime will always override those defined inside the .env file
+# An external IP or DNS name has to be used when testing the Web apps and the Xamarin apps from remote machines/devices using the same WiFi, for instance.
+#
+# IMPORTANT: Note that this compose file uses VIA_PROD_EXTERNAL_DNS_NAME_OR_IP instead of VIA_EXTERNAL_DNS_NAME_OR_IP
+
+# Set ASPNETCORE_ENVIRONMENT= Development or Production, depending if you want to show up errors while testing.
+#
+# You need to start it with the following CLI command:
+# docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+services:
+
+  chat-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:443
+      - SpaClient=http://${VIA_PROD_EXTERNAL_DNS_NAME_OR_IP}:3000
+      - VALIDATE_JWT=False
+      - VALIDATE_JWT_LIFETIME=False
+      - ConnectionStrings__ChatDatabaseConnectionString=${VIA_DB_CONNECTION:-Server=sqldata;Database=ViaChatServer.Service.ChatDb;User Id=sa;Password=Pass@word}
+      - Serilog__MinimumLevel__Default=Information
+      - Serilog__MinimumLevel__Override__Microsoft=Warning
+      - Serilog__MinimumLevel__Override__System=Warning
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - AllowedHosts=*
+    ports:
+      - "443"   # The API Gateway redirects and access through the internal port (443).
+
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"    # Important: In a production environment your should remove the external port

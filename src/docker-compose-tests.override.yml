@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - via-sqldata-test:/var/opt/mssql
+
+  chat-api-test:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://0.0.0.0:443
+      - SpaClient=http://${VIA_EXTERNAL_DNS_NAME_OR_IP}:3000
+      - VALIDATE_JWT=False
+      - VALIDATE_JWT_LIFETIME=False
+      - ConnectionStrings__ChatDatabaseConnectionString=${VIA_DB_CONNECTION:-Server=sqldata;Database=ViaChatServer.Service.ChatDb;User Id=sa;Password=Pass@word}
+      - Serilog__MinimumLevel__Default=Information
+      - Serilog__MinimumLevel__Override__Microsoft=Warning
+      - Serilog__MinimumLevel__Override__System=Warning
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - AllowedHosts=*
+    ports:
+      - "44382:443"
+
+volumes:
+  via-sqldata-test:
+    external: false

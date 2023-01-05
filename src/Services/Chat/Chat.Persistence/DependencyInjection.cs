@@ -28,10 +28,14 @@ namespace Chat.Persistence
 #endif
             // Using LocalDB
             // https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver16
-            string connectionString = configuration.GetValue<string>("ConnectionStrings__ChatDatabaseConnectionString"); 
+            string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__ChatDatabaseConnectionString");
             if (connectionString.IsEmpty())
             {
-                throw new ArgumentNullException(nameof(connectionString));
+                connectionString = configuration.GetValue<string>("ConnectionStrings__ChatDatabaseConnectionString");
+                if (connectionString.IsEmpty())
+                {
+                    throw new ArgumentNullException(nameof(connectionString));
+                }
             }
 
             services.AddDbContext<ChatDbContext>(options =>

@@ -29,7 +29,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Persistence", "Service
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "WebSPA", "Web\WebSPA\WebSPA.esproj", "{CD8218FF-AD4C-454F-8229-AE3E711D36FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientsLibrary", "BuildingBlocks\ClientsLibrary\ClientsLibrary.csproj", "{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientsLibrary", "BuildingBlocks\ClientsLibrary\ClientsLibrary.csproj", "{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3CC4341B-94D8-49D4-AEA5-0D7A256FCCB2}"
+	ProjectSection(SolutionItems) = preProject
+		.env = .env
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +82,10 @@ Global
 		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17B1D5A5-D6A8-47D8-9885-57A35A814D7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA0C318-FFED-4D39-8781-265718CA43DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

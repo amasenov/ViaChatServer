@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+ARG BUILD_CONFIGURATION=Debug
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+EXPOSE 443
+
+WORKDIR /src
+
+COPY ["BuildingBlocks/Infrastructure/Infrastructure.csproj", "BuildingBlocks/Infrastructure/"]
+COPY ["Services/Chat/Chat.Domain/Chat.Domain.csproj", "Services/Chat/Chat.Domain/"]
+COPY ["Services/Chat/Chat.Application/Chat.Application.csproj", "Services/Chat/Chat.Application/"]
+COPY ["Services/Chat/Chat.Persistence/Chat.Persistence.csproj", "Services/Chat/Chat.Persistence/"]
+COPY ["Services/Chat/Chat.API/Chat.API.csproj", "Services/Chat/Chat.API/"]
+COPY ["NuGet.config", "NuGet.config"]
+
+RUN dotnet restore Services/Chat/Chat.API/Chat.API.csproj -nowarn:msb3202,nu1503
+COPY . .
+WORKDIR "/src/Services/Chat/Chat.API"
+RUN dotnet build -c $BUILD_CONFIGURATION
+
+ENTRYPOINT ["dotnet", "run", "--no-build", "--no-launch-profile", "-c", "$BUILD_CONFIGURATION", "--"]
